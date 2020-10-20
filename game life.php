@@ -1,16 +1,44 @@
 <?php 
-// Life v2. /10 steps/
-$step = 1;
+// Life v3. /10 steps/
+//add function printResult for nice output
+//TODO nice user input
+
 $space = [
 ['O','X','O','O','O'],
 ['O','X','O','O','O'],
-['X','X','O','O','O'],
+['O','X','O','O','O'],
 ['O','O','O','O','O'],
 ['O','O','O','O','O']
 ];
 
-function getNeighbors($space, $keyRows, $keyColumns)
-{   
+function printResult($cells, $col, $row) {
+    static $step = 1;
+    $i = 1;
+    $j = 0;
+    $printRes = 'Шаг '.$step.'<table border="1"><tr>';
+    foreach ($cells as $item) {
+        $color = 'white';
+        if ($item['fill'] == 'X') {
+            $color = 'black';
+        }
+        $printRes .= '<td bgcolor="'.$color.'" width="40px" height="45px">';
+        $resultSpace[$j][] = $item['fill'];
+        if ($i == $col + 1) {
+            $printRes .= '</tr>';
+            if ($j != $row) {
+                $printRes .= '<tr>';
+            }
+            $i = 0;
+            $j++;
+        }
+        $i++;
+    }
+    $printRes .= '</table><br>';
+    $step++;
+    return [$printRes, $resultSpace];
+}
+
+function getNeighbors($space, $keyRows, $keyColumns) {   
     $workMap = [0, -1, 0, 1, -1, -1, -1, 0, -1, 1, 1, -1, 1, 0, 1, 1];
     $neighbors = 0;
         for ($i = 0; $i < 16; $i += 2) {
@@ -28,7 +56,7 @@ foreach ($space as $item) {
 }
 echo '<br>';
 for($f = 1; $f <= 10; $f++){
-
+    $row = count($space) - 1;
     $col = count($space[0]) - 1;
     foreach ($space as $keyRows => $rows) {
         foreach ($rows as $keyColumns => $cell) {
@@ -43,19 +71,7 @@ for($f = 1; $f <= 10; $f++){
         }
     }
 
-    echo '<br>'. 'шаг '. $step. '<br>';
-    $i = 1;
-    $j = 0;
-    foreach ($cells as $item) {
-        echo $item['fill'].' ';
-        $resultSpace[$j][] = $item['fill'];
-        if ($i == $col + 1) {
-            echo '<br>';
-            $i = 0;
-            $j++;
-        }
-        $i++;
-    }
+    list ($printRes, $resultSpace) =  printResult($cells, $col, $row);
     if ($space == $resultSpace) {
         break;
     } else {
@@ -64,5 +80,6 @@ for($f = 1; $f <= 10; $f++){
         unset($resultSpace);
         $step++;
     }
+    echo $printRes;
 }
  ?>
